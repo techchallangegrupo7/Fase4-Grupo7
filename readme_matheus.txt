@@ -1,0 +1,1 @@
+python video_analyzer.py --video_path tc_video.mp4

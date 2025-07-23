@@ -10,8 +10,7 @@ from datetime import datetime # Import datetime for current date/time
 
 # --- Configurações e Constantes Globais ---
 MIN_LANDMARK_VISIBILITY = 0.1
-FACE_CROP_RATIO_Y = (0.05, 0.45)
-FACE_CROP_RATIO_X = (0.2, 0.8)
+# FACE_CROP_RATIO_Y e FACE_CROP_RATIO_X foram removidos pois não são mais utilizados.
 
 # Limiares para detecção de postura (ajustáveis)
 THRESHOLD_LYING_ASPECT_RATIO = 1.8
@@ -45,9 +44,8 @@ def analyze_emotion_deepface(face_image):
     if face_image is None or face_image.size == 0:
         return "neutral", 0.0
     try:
-        if len(face_image.shape) == 2:
-            face_image = cv2.cvtColor(face_image, cv2.COLOR_GRAY2BGR)
-
+        # DeepFace.analyze irá tentar detectar o rosto dentro da face_image fornecida.
+        # Se face_image for o person_crop_rgb (caixa YOLO), DeepFace vai procurar o rosto lá dentro.
         results = DeepFace.analyze(face_image, actions=['emotion'], enforce_detection=False, silent=True)
 
         if results and isinstance(results, list) and len(results) > 0:
@@ -55,6 +53,7 @@ def analyze_emotion_deepface(face_image):
             emotion_score = results[0]['emotion'][dominant_emotion]
             return dominant_emotion, emotion_score
     except Exception as e:
+        # print(f"Erro na análise de emoção: {e}") # Descomente para depurar erros
         pass
     return "neutral", 0.0
 
@@ -337,9 +336,9 @@ def analyze_member_movement(current_pose_landmarks, prev_pose_landmarks, frame_w
         "Braco Direito": [mp.solutions.pose.PoseLandmark.RIGHT_SHOULDER, mp.solutions.pose.PoseLandmark.RIGHT_ELBOW,
                           mp.solutions.pose.PoseLandmark.RIGHT_WRIST],
         "Perna Esquerda": [mp.solutions.pose.PoseLandmark.LEFT_HIP, mp.solutions.pose.PoseLandmark.LEFT_KNEE,
-                          mp.solutions.pose.PoseLandmark.LEFT_ANKLE],
+                           mp.solutions.pose.PoseLandmark.LEFT_ANKLE],
         "Perna Direita": [mp.solutions.pose.PoseLandmark.RIGHT_HIP, mp.solutions.pose.PoseLandmark.RIGHT_KNEE,
-                         mp.solutions.pose.PoseLandmark.RIGHT_ANKLE]
+                          mp.solutions.pose.PoseLandmark.RIGHT_ANKLE]
     }
 
     visibility_threshold = 0.6
@@ -418,6 +417,15 @@ def process_video_with_yolo_and_mediapipe_and_deepface(input_video_path, output_
     global_previous_positions_for_activities = {}
     global_pose_history_for_member_movement = defaultdict(lambda: [])
 
+    # --- NOVO: Define a pasta de saída para as imagens e a cria se não existir ---
+    # Obtém o diretório do script atual
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    # Cria o caminho completo para a subpasta "imagens"
+    output_image_dir = os.path.join(script_dir, "imagens")
+    # Cria a pasta se ela não existir
+    os.makedirs(output_image_dir, exist_ok=True)
+    print(f"Imagens de depuração serão salvas em: '{output_image_dir}'")
+    # --- FIM DO NOVO ---
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
@@ -455,6 +463,14 @@ def process_video_with_yolo_and_mediapipe_and_deepface(input_video_path, output_
                 current_crop_height = crop_y2 - crop_y1
 
                 person_crop_rgb = frame_rgb[crop_y1:crop_y2, crop_x1:crop_x2]
+
+                # --- LINHA ADICIONADA/MODIFICADA PARA SALVAR IMAGENS ---
+                # Apenas salve se o recorte for válido
+                if person_crop_rgb.size > 0:
+                    # Converte de volta para BGR antes de salvar, pois o OpenCV espera BGR para salvar
+                    cv2.imwrite(os.path.join(output_image_dir, f"{frame_count:04d}_person_{person_id}.jpg"),
+                                cv2.cvtColor(person_crop_rgb, cv2.COLOR_RGB2BGR))
+                # --- FIM DA LINHA ADICIONADA/MODIFICADA --
 
                 if current_crop_width > 0 and current_crop_height > 0:
                     results_mediapipe_person = pose_estimator.process(person_crop_rgb)
@@ -511,19 +527,8 @@ def process_video_with_yolo_and_mediapipe_and_deepface(input_video_path, output_
                         for member in moving_members_this_person:
                             overall_member_movement_counts[member] += 1
 
-                    face_x1 = int(x1 + bbox_width * FACE_CROP_RATIO_X[0])
-                    face_y1 = int(y1 + bbox_height * FACE_CROP_RATIO_Y[0])
-                    face_x2 = int(x1 + bbox_width * FACE_CROP_RATIO_X[1])
-                    face_y2 = int(y1 + bbox_height * FACE_CROP_RATIO_Y[1])
 
-                    face_x1 = max(0, face_x1)
-                    face_y1 = max(0, face_y1)
-                    face_x2 = min(current_frame_width, face_x2)
-                    face_y2 = min(current_frame_height, face_y2)
-
-                    face_img = frame[face_y1:face_y2, face_x1:face_x2]
-
-                    dominant_emotion, emotion_score = analyze_emotion_deepface(face_img)
+                    dominant_emotion, emotion_score = analyze_emotion_deepface(person_crop_rgb)
                     overall_emotion_counts[dominant_emotion] += 1
 
                     # --- DESENHAR BOUNDING BOX E RÓTULOS DENTRO DA BOX ---

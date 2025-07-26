@@ -376,7 +376,7 @@ def process_video_with_yolo_and_mediapipe_and_deepface(input_video_path, output_
         print(f"Erro: O arquivo de vídeo de entrada não foi encontrado em '{input_video_path}'")
         return
 
-    yolo_model = YOLO('yolov8n.pt')
+    yolo_model = YOLO('yolov8m.pt')
     mp_pose_instance = mp.solutions.pose
     pose_estimator = mp_pose_instance.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
 

@@ -1,11 +1,3 @@
-🚀
-
-🚀
-
-⚙️
-
-⚙️
-
 # 🤖 Tech Challenge - Fase 4: Análise de Vídeo com IA
 
 Este projeto é uma solução para o **Tech Challenge - Fase 4** do curso 4IADT. A aplicação realiza análise automatizada de vídeo com:

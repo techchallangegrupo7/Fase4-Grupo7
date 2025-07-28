@@ -57,6 +57,14 @@ Durante a execução:
 
 ---
 
+## 📺 Saída do Projeto
+
+[Google Drive](https://drive.google.com/file/d/1JDq2ZwYoOLiY6hA07gZlj9eR357X8RkP/view?usp=sharing)
+- 🎥 Vídeo gerado com anotações: tc_video_output.mp4 
+- 📄 Exemplo de relatório gerado: `relatorio_movimentos_20250728_134501.txt`
+
+---
+
 ## 📊 Funcionalidades
 
 | Funcionalidade               | Descrição                                                   |

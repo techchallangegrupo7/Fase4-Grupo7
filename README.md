@@ -81,7 +81,7 @@ Durante a execução:
 ## 🧠Tecnologias Utilizadas
 
 - [YOLOv8 - Ultralytics](https://github.com/ultralytics/ultralytics)
-- [MediaPipe - Google](https://google.github.io/mediapipe/)
+- [MediaPipe - Google](https://github.com/google-ai-edge/mediapipe)
 - [DeepFace](https://github.com/serengil/deepface)
 - [OpenCV](https://opencv.org/)
 - Python 3.8+

@@ -106,6 +106,13 @@ relatorio_movimentos_20250728_134501.txt
 
 ---
 
+## 🎥 Demonstração em Vídeo
+
+Assista ao vídeo explicativo do projeto:
+[🔗 YouTube – Grupo 7 Tech Challenge](https://youtu.be/6NzMjXPh-pE)
+
+---
+
 ## 👥 Equipe
 
 Grupo 7 da turma IA para Devs - FIAP:

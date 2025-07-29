@@ -112,6 +112,6 @@ Grupo 7 da turma IA para Devs - FIAP:
 
 * **Fábio Yuiti Takaki** (Discord: `takakisan.`)
 * **Luiz Claudio Cunha de Albuquerque** (Discord: `inefavel1305`)
-* **Matheus Felipe Condé Rocha** (Discord: `mfconde`)
+* **Matheus Filipe Condé Rocha** (Discord: `mfconde`)
 * **Pedro Vitor Franco de Carvalho** (Discord: `pedro_black10`)
 * **Tatiana Yuka Takaki** (Discord: `tatianayk`)
